@@ -36,10 +36,14 @@ public class GamePlay extends JPanel implements KeyListener, ActionListener{
     
     private int playerX = 400;
     
+    /*
     private int ballposX = 120;
     private int ballposY = 350;
     private int ballXdir = -1;
     private int ballYdir = -2;
+    */
+    
+    private Ball ball;
     
     private Image img;
     
@@ -49,6 +53,8 @@ public class GamePlay extends JPanel implements KeyListener, ActionListener{
         setFocusTraversalKeysEnabled(false);
         timer = new Timer(delay, this);
         timer.start();
+        
+        ball = new Ball();
         
         try {
             img = ImageIO.read(new File("background.png"));
@@ -77,7 +83,7 @@ public class GamePlay extends JPanel implements KeyListener, ActionListener{
         
         //the ball
         g.setColor(Color.yellow);
-        g.fillOval(ballposX, ballposY, 20, 20);
+        g.fillOval(ball.getBallposX(), ball.getBallposY(), 20, 20);
         
         g.dispose();
     }
@@ -86,21 +92,22 @@ public class GamePlay extends JPanel implements KeyListener, ActionListener{
     public void actionPerformed(ActionEvent e) {
         timer.start();
         if(play) {
-            if(new Rectangle(ballposX, ballposY, 20, 20).intersects(new Rectangle(playerX, 550, 100, 8))){
-                ballYdir = -ballYdir;
+            // check if ball hit the baddle
+            if(new Rectangle(ball.getBallposX(), ball.getBallposY() , 20, 20).intersects(new Rectangle(playerX, 550, 100, 8))){
+                ball.reverseBallYdir();
             }
             
-            ballposX += ballXdir;
-            ballposY += ballYdir;
+            ball.addposX(ball.getBallXdir());
+            ball.addposY(ball.getBallYdir());
             
-            if(ballposX < 0) {
-                ballXdir = -ballXdir;
-            } else if (ballposX > 870) {
-                ballXdir = -ballXdir;
+            if(ball.getBallposX() < 0) {
+                ball.reverseBallXdir();
+            } else if (ball.getBallposX() > 870) {
+                ball.reverseBallXdir();
             }
             
-            if(ballposY < 0) {
-                ballYdir = -ballYdir;
+            if(ball.getBallposY() < 0) {
+                ball.reverseBallYdir();
             }
         }
         repaint();
