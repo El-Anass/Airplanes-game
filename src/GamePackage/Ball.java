@@ -10,13 +10,23 @@ package GamePackage;
  * @author elabbadi
  */
 public class Ball {
-    private int ballposX = 120;
-    private int ballposY = 350;
-    private int ballXdir = -1;
-    private int ballYdir = -2;
+    private int ballposX;
+    private int ballposY;
+    private int ballXdir;
+    private int ballYdir;
     
     public Ball() {
-        
+        ballposX = 120;
+        ballposY = 530;
+        ballXdir = 0;
+        ballYdir = -1;
+    }
+    
+    public Ball(int playerX) {
+        ballposX = playerX + 40;
+        ballposY = 530;
+        ballXdir = 0;
+        ballYdir = -1;
     }
     
     // Getters and Setters

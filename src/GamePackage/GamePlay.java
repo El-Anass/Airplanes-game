@@ -15,6 +15,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
@@ -36,14 +37,11 @@ public class GamePlay extends JPanel implements KeyListener, ActionListener{
     
     private int playerX = 400;
     
-    /*
-    private int ballposX = 120;
-    private int ballposY = 350;
-    private int ballXdir = -1;
-    private int ballYdir = -2;
-    */
+    private ArrayList<Ball> balls;
+    private ArrayList<Plane> planes;
     
-    private Ball ball;
+    private int timeNewPlane;
+    
     
     private Image img;
     
@@ -54,7 +52,10 @@ public class GamePlay extends JPanel implements KeyListener, ActionListener{
         timer = new Timer(delay, this);
         timer.start();
         
-        ball = new Ball();
+        balls = new ArrayList();
+        planes = new ArrayList();
+        
+        planes.add(new Plane());
         
         try {
             img = ImageIO.read(new File("background.png"));
@@ -65,17 +66,8 @@ public class GamePlay extends JPanel implements KeyListener, ActionListener{
     
     @Override
     public void paint(Graphics g) {
-        //background
-        //g.setColor(Color.black);
-        //g.fillRect(1, 1, 692, 592);
-        
+        // draw the background image
         g.drawImage(img, 0, 0, null);
-
-        //Border 
-        /*g.setColor(Color.yellow);
-        g.fillRect(0, 0, 3, 592);
-        g.fillRect(0, 0, 892, 3);
-        g.fillRect(892, 0, 3, 592);*/
         
         //the paddle
         g.setColor(Color.green);
@@ -83,7 +75,16 @@ public class GamePlay extends JPanel implements KeyListener, ActionListener{
         
         //the ball
         g.setColor(Color.yellow);
-        g.fillOval(ball.getBallposX(), ball.getBallposY(), 20, 20);
+        
+        // draw balls
+        for (int counter = 0; counter < balls.size(); counter++) {          
+            g.fillOval(balls.get(counter).getBallposX(), balls.get(counter).getBallposY(), 20, 20);
+        }
+        
+        // draw planes
+        for (int counter = 0; counter < planes.size(); counter++) {          
+            g.fillRect(planes.get(counter).getPlaneposX(), planes.get(counter).getPlaneposY(), 80, 50);
+        }
         
         g.dispose();
     }
@@ -92,22 +93,36 @@ public class GamePlay extends JPanel implements KeyListener, ActionListener{
     public void actionPerformed(ActionEvent e) {
         timer.start();
         if(play) {
-            // check if ball hit the baddle
-            if(new Rectangle(ball.getBallposX(), ball.getBallposY() , 20, 20).intersects(new Rectangle(playerX, 550, 100, 8))){
-                ball.reverseBallYdir();
+            for (int counter = 0; counter < balls.size(); counter++) {           
+                balls.get(counter).addposX(balls.get(counter).getBallXdir());
+                balls.get(counter).addposY(balls.get(counter).getBallYdir());
+
+                if(balls.get(counter).getBallposX() < 0) {
+                    balls.get(counter).reverseBallXdir();
+                } else if (balls.get(counter).getBallposX() > 870) {
+                    balls.get(counter).reverseBallXdir();
+                }
+
+                if(balls.get(counter).getBallposY() < 0) {
+                    balls.get(counter).reverseBallYdir();
+                    balls.remove(counter);
+                }
+                
             }
             
-            ball.addposX(ball.getBallXdir());
-            ball.addposY(ball.getBallYdir());
-            
-            if(ball.getBallposX() < 0) {
-                ball.reverseBallXdir();
-            } else if (ball.getBallposX() > 870) {
-                ball.reverseBallXdir();
-            }
-            
-            if(ball.getBallposY() < 0) {
-                ball.reverseBallYdir();
+            for (int counter = 0; counter < planes.size(); counter++) {           
+                // check if plane hit the ball
+                /*if(new Rectangle(balls.get(counter).getBallposX(), balls.get(counter).getBallposY() , 20, 20).intersects(new Rectangle(playerX, 550, 100, 8))){
+                    balls.get(counter).reverseBallYdir();
+                }*/
+                
+                planes.get(counter).addposX(1);
+                planes.get(counter).addposY(0);
+
+                if (planes.get(counter).getPlaneposX() > 870) {
+                    planes.remove(counter);
+                }
+                
             }
         }
         repaint();
@@ -130,6 +145,10 @@ public class GamePlay extends JPanel implements KeyListener, ActionListener{
             else {
                 moveLeft();
             }
+        }
+        if(e.getKeyCode() == KeyEvent.VK_SPACE) {
+            balls.add(new Ball(playerX));
+            System.out.println("Current balls list is:" + balls);
         }
     }
     
