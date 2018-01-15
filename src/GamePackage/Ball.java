@@ -77,13 +77,4 @@ public class Ball {
     public void addposY(int val) {
         ballposY += val;
     }
-    
-    // reverse direction
-    public void reverseBallXdir() {
-        ballXdir = -ballXdir;
-    }
-    
-    public void reverseBallYdir() {
-        ballYdir = -ballYdir;
-    }
 }
