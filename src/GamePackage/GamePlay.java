@@ -29,12 +29,12 @@ import javax.swing.Timer;
  */
 public class GamePlay extends JPanel implements KeyListener, ActionListener{
     private boolean play;
-    private int score = 0;
+    private int score;
     
     private Timer timer; 
-    private int delay = 8;
+    private int delay;
     
-    private int playerX = 400;
+    private int playerX;
     
     private ArrayList<Ball> balls;
     private ArrayList<Plane> planes;
@@ -48,6 +48,7 @@ public class GamePlay extends JPanel implements KeyListener, ActionListener{
         setFocusable(true);
         setFocusTraversalKeysEnabled(false);
         play = true;
+        delay = 8;
         timer = new Timer(delay, this);
         timer.start();
         
@@ -57,6 +58,9 @@ public class GamePlay extends JPanel implements KeyListener, ActionListener{
         planes.add(new Plane());
         
         timePlane = System.currentTimeMillis();
+        
+        playerX = 400;
+        score = 0;
         
         try {
             img = ImageIO.read(new File("background.png"));
@@ -82,11 +86,8 @@ public class GamePlay extends JPanel implements KeyListener, ActionListener{
         // draw the background image
         g.drawImage(img, 0, 0, null);
         
-        g.drawImage(tank, 500, 470, 150, 75, null);
-        
-        //the paddle
-        g.setColor(Color.green);
-        g.fillRect(playerX, 550, 100, 8);
+        //the tank
+        g.drawImage(tank, playerX, 490, 120, 60, null);
         
         //the ball
         g.setColor(Color.black);
@@ -138,7 +139,7 @@ public class GamePlay extends JPanel implements KeyListener, ActionListener{
                     balls.remove(counter);
                 }
                 
-                if(new Rectangle(playerX, 550 , 100, 8).intersects(new Rectangle(balls.get(counter).getBallposX(), balls.get(counter).getBallposY(), 20, 20))){
+                if(new Rectangle(playerX, 490 , 120, 60).intersects(new Rectangle(balls.get(counter).getBallposX(), balls.get(counter).getBallposY(), 20, 20))){
                     balls.remove(counter);
                     play = false;
                     break;

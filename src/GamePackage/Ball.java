@@ -23,8 +23,8 @@ public class Ball {
     }
     
     public Ball(int playerX) {
-        ballposX = playerX + 40;
-        ballposY = 525;
+        ballposX = playerX + 50;
+        ballposY = 470;
         ballXdir = 0;
         ballYdir = -1;
     }

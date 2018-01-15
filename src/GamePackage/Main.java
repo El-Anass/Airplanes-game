@@ -16,7 +16,7 @@ public class Main {
         JFrame obj = new JFrame();
         GamePlay gamePlay = new GamePlay();
         obj.setBounds(10, 10, 900, 600);
-        obj.setTitle("LSI Game");
+        obj.setTitle("Plane Game");
         obj.setResizable(false);
         obj.setVisible(true);
         obj.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
