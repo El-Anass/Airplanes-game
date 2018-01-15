@@ -41,8 +41,7 @@ public class GamePlay extends JPanel implements KeyListener, ActionListener{
     
     private long timePlane;
     
-    
-    private Image img;
+    private Image img, plane, tank;
     
     public GamePlay() {
         addKeyListener(this);
@@ -64,12 +63,26 @@ public class GamePlay extends JPanel implements KeyListener, ActionListener{
         } catch (IOException ex) {
             Logger.getLogger(GamePlay.class.getName()).log(Level.SEVERE, null, ex);
         }
+        
+        try {
+            plane = ImageIO.read(new File("plane.png"));
+        } catch (IOException ex) {
+            Logger.getLogger(GamePlay.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        try {
+            tank = ImageIO.read(new File("tank.png"));
+        } catch (IOException ex) {
+            Logger.getLogger(GamePlay.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
     
     @Override
     public void paint(Graphics g) {
         // draw the background image
         g.drawImage(img, 0, 0, null);
+        
+        g.drawImage(tank, 500, 470, 150, 75, null);
         
         //the paddle
         g.setColor(Color.green);
@@ -100,7 +113,7 @@ public class GamePlay extends JPanel implements KeyListener, ActionListener{
         
         // draw planes
         for (int counter = 0; counter < planes.size(); counter++) {          
-            g.fillRect(planes.get(counter).getPlaneposX(), planes.get(counter).getPlaneposY(), 80, 50);
+            g.drawImage(plane, planes.get(counter).getPlaneposX(), planes.get(counter).getPlaneposY(), 80, 50, null);
         }
         
         g.dispose();
@@ -176,6 +189,7 @@ public class GamePlay extends JPanel implements KeyListener, ActionListener{
     @Override
     public void keyPressed(KeyEvent e) {
         if(play) {
+            // move the baddle
             if(e.getKeyCode() == KeyEvent.VK_RIGHT) {
                 if(playerX >= 800) {
                     playerX = 800;
@@ -192,6 +206,8 @@ public class GamePlay extends JPanel implements KeyListener, ActionListener{
                     moveLeft();
                 }
             }
+            
+            // create a new bomb
             if(e.getKeyCode() == KeyEvent.VK_SPACE) {
                 balls.add(new Ball(playerX));
             }
