@@ -18,6 +18,11 @@ public class Plane {
         planeposY = 150;
     }
     
+    public Plane(int posY) {
+        planeposX = -80;
+        planeposY = posY;
+    }
+    
     // Getters and Setters
     public int getPlaneposX(){
         return planeposX;

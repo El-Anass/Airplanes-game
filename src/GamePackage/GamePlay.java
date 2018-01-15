@@ -16,6 +16,7 @@ import java.awt.event.KeyListener;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
@@ -40,7 +41,7 @@ public class GamePlay extends JPanel implements KeyListener, ActionListener{
     private ArrayList<Ball> balls;
     private ArrayList<Plane> planes;
     
-    private int timeNewPlane;
+    private long timePlane;
     
     
     private Image img;
@@ -56,6 +57,8 @@ public class GamePlay extends JPanel implements KeyListener, ActionListener{
         planes = new ArrayList();
         
         planes.add(new Plane());
+        
+        timePlane = System.currentTimeMillis();
         
         try {
             img = ImageIO.read(new File("background.png"));
@@ -75,6 +78,23 @@ public class GamePlay extends JPanel implements KeyListener, ActionListener{
         
         //the ball
         g.setColor(Color.yellow);
+        
+        Random rand = new Random();
+
+        int  randPlane = rand.nextInt(5) + 2;
+        
+        int  randY = rand.nextInt(250) + 20;
+        
+        long nowMillis = System.currentTimeMillis();
+        
+        int diff = (int)((nowMillis - timePlane) / 1000);
+        
+        System.out.println(diff);
+        
+        if(diff >= randPlane) {
+            planes.add(new Plane(randY));
+            timePlane = nowMillis;
+        }
         
         // draw balls
         for (int counter = 0; counter < balls.size(); counter++) {          
@@ -110,11 +130,23 @@ public class GamePlay extends JPanel implements KeyListener, ActionListener{
                 
             }
             
-            for (int counter = 0; counter < planes.size(); counter++) {           
+            int idPlane = -1;
+            boolean intersectes = false;
+            
+            for (int counter = 0; counter < planes.size(); counter++) {   
                 // check if plane hit the ball
-                /*if(new Rectangle(balls.get(counter).getBallposX(), balls.get(counter).getBallposY() , 20, 20).intersects(new Rectangle(playerX, 550, 100, 8))){
-                    balls.get(counter).reverseBallYdir();
-                }*/
+                for (int i = 0; i < balls.size(); i++) {
+                    if(new Rectangle(planes.get(counter).getPlaneposX(), planes.get(counter).getPlaneposY() , 80, 50).intersects(new Rectangle(balls.get(i).getBallposX(), balls.get(i).getBallposY(), 20, 20))){
+                        balls.remove(i);
+                        idPlane = counter;
+                        intersectes = true;
+                        break;
+                    }
+                }
+                
+                if(intersectes) {
+                    break;
+                }
                 
                 planes.get(counter).addposX(1);
                 planes.get(counter).addposY(0);
@@ -124,7 +156,11 @@ public class GamePlay extends JPanel implements KeyListener, ActionListener{
                 }
                 
             }
+            if(intersectes) {
+                planes.remove(idPlane);
+            }
         }
+        
         repaint();
     }
 
