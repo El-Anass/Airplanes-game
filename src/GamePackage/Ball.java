@@ -17,16 +17,23 @@ public class Ball {
     
     public Ball() {
         ballposX = 120;
-        ballposY = 530;
+        ballposY = 525;
         ballXdir = 0;
         ballYdir = -1;
     }
     
     public Ball(int playerX) {
         ballposX = playerX + 40;
-        ballposY = 530;
+        ballposY = 525;
         ballXdir = 0;
         ballYdir = -1;
+    }
+    
+    public Ball(int posX, int posY, int xdir, int ydir) {
+        ballposX = posX;
+        ballposY = posY;
+        ballXdir = xdir;
+        ballYdir = ydir;
     }
     
     // Getters and Setters

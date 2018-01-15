@@ -28,10 +28,8 @@ import javax.swing.Timer;
  * @author elabbadi
  */
 public class GamePlay extends JPanel implements KeyListener, ActionListener{
-    private boolean play = false;
+    private boolean play;
     private int score = 0;
-    
-    private int totalPlans = 20;
     
     private Timer timer; 
     private int delay = 8;
@@ -50,6 +48,7 @@ public class GamePlay extends JPanel implements KeyListener, ActionListener{
         addKeyListener(this);
         setFocusable(true);
         setFocusTraversalKeysEnabled(false);
+        play = true;
         timer = new Timer(delay, this);
         timer.start();
         
@@ -77,7 +76,7 @@ public class GamePlay extends JPanel implements KeyListener, ActionListener{
         g.fillRect(playerX, 550, 100, 8);
         
         //the ball
-        g.setColor(Color.yellow);
+        g.setColor(Color.black);
         
         Random rand = new Random();
 
@@ -88,8 +87,6 @@ public class GamePlay extends JPanel implements KeyListener, ActionListener{
         long nowMillis = System.currentTimeMillis();
         
         int diff = (int)((nowMillis - timePlane) / 1000);
-        
-        System.out.println(diff);
         
         if(diff >= randPlane) {
             planes.add(new Plane(randY));
@@ -128,6 +125,11 @@ public class GamePlay extends JPanel implements KeyListener, ActionListener{
                     balls.remove(counter);
                 }
                 
+                if(new Rectangle(playerX, 550 , 100, 8).intersects(new Rectangle(balls.get(counter).getBallposX(), balls.get(counter).getBallposY(), 20, 20))){
+                    balls.remove(counter);
+                    play = false;
+                    break;
+                }
             }
             
             int idPlane = -1;
@@ -144,9 +146,8 @@ public class GamePlay extends JPanel implements KeyListener, ActionListener{
                     }
                 }
                 
-                if(intersectes) {
+                if(intersectes)
                     break;
-                }
                 
                 planes.get(counter).addposX(1);
                 planes.get(counter).addposY(0);
@@ -155,9 +156,17 @@ public class GamePlay extends JPanel implements KeyListener, ActionListener{
                     planes.remove(counter);
                 }
                 
+                Random rand = new Random();
+                int  randBomb = rand.nextInt(700) + 1;
+                if(randBomb == 2) {
+                    balls.add(new Ball(planes.get(counter).getPlaneposX() + 30, planes.get(counter).getPlaneposY() + 50, 0, 1));
+                }
             }
+            
             if(intersectes) {
                 planes.remove(idPlane);
+                score++;
+                System.out.println(score);
             }
         }
         
@@ -166,35 +175,42 @@ public class GamePlay extends JPanel implements KeyListener, ActionListener{
 
     @Override
     public void keyPressed(KeyEvent e) {
-        if(e.getKeyCode() == KeyEvent.VK_RIGHT) {
-            if(playerX >= 800) {
-                playerX = 800;
+        if(play) {
+            if(e.getKeyCode() == KeyEvent.VK_RIGHT) {
+                if(playerX >= 800) {
+                    playerX = 800;
+                }
+                else {
+                    moveRight();
+                }
             }
-            else {
-                moveRight();
+            if(e.getKeyCode() == KeyEvent.VK_LEFT) {
+                if(playerX < 10) {
+                    playerX = 10;
+                }
+                else {
+                    moveLeft();
+                }
+            }
+            if(e.getKeyCode() == KeyEvent.VK_SPACE) {
+                balls.add(new Ball(playerX));
             }
         }
-        if(e.getKeyCode() == KeyEvent.VK_LEFT) {
-            if(playerX < 10) {
-                playerX = 10;
-            }
-            else {
-                moveLeft();
-            }
-        }
-        if(e.getKeyCode() == KeyEvent.VK_SPACE) {
-            balls.add(new Ball(playerX));
-            System.out.println("Current balls list is:" + balls);
+        
+        // Change the play variable
+        if(e.getKeyCode() == KeyEvent.VK_P) {
+            if(play)
+                play = false;
+            else 
+                play = true;
         }
     }
     
     public void moveRight() {
-        play = true;
         playerX += 20;
     }
     
     public void moveLeft() {
-        play = true;
         playerX -= 20;
     }
 
