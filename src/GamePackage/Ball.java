@@ -19,14 +19,14 @@ public class Ball {
         ballposX = 120;
         ballposY = 525;
         ballXdir = 0;
-        ballYdir = -1;
+        ballYdir = -3;
     }
     
     public Ball(int playerX) {
-        ballposX = playerX + 50;
-        ballposY = 470;
+        ballposX = playerX + 54;
+        ballposY = 455;
         ballXdir = 0;
-        ballYdir = -1;
+        ballYdir = -3;
     }
     
     public Ball(int posX, int posY, int xdir, int ydir) {

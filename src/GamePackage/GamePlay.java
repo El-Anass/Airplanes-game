@@ -20,7 +20,9 @@ import java.util.ArrayList;
 import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import javax.imageio.ImageIO;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.Timer;
 
@@ -30,7 +32,9 @@ import javax.swing.Timer;
  */
 public class GamePlay extends JPanel implements KeyListener, ActionListener{
     private boolean play;
+    
     public static int score;
+    public String nom;
     
     private Timer timer; 
     private int delay;
@@ -46,8 +50,8 @@ public class GamePlay extends JPanel implements KeyListener, ActionListener{
     //an array for the tub images
     private String[] arrayTube = {"tube_left_2.png", "tube_left.png", "tube.png", "tube_right.png", "tube_right_2.png"};
     private int tubeIndex = 2;
-    
-    private Image img, plane, tank, enemyB, defendB, tube;
+
+    private Image img, plane, tank, enemyB, defendB, tube,exp;
     
     public GamePlay() {
         addKeyListener(this);
@@ -57,6 +61,9 @@ public class GamePlay extends JPanel implements KeyListener, ActionListener{
         delay = 8;
         timer = new Timer(delay, this);
         timer.start();
+       setFocusable(true);
+       requestFocus();
+
        
         
         
@@ -78,6 +85,7 @@ public class GamePlay extends JPanel implements KeyListener, ActionListener{
         try {
             plane = ImageIO.read(new File("plane.png"));
             tank = ImageIO.read(new File("tank.png"));
+            exp= ImageIO.read(new File("exp.png"));
             enemyB = ImageIO.read(new File("enemy.png"));
             defendB = ImageIO.read(new File("defend.png"));
             tube = ImageIO.read(new File(arrayTube[tubeIndex]));
@@ -91,7 +99,7 @@ public class GamePlay extends JPanel implements KeyListener, ActionListener{
         // draw the background image
         g.drawImage(img, 0, 0, null);
         
-        //the tank
+        //the tank     
         g.drawImage(tank, playerX, 490, 120, 60, null);
         g.drawImage(tube, playerX + 50, 455, 20, 40, null);
         
@@ -137,7 +145,7 @@ public class GamePlay extends JPanel implements KeyListener, ActionListener{
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        timer.start();
+      
         if(play) {
             for (int counter = 0; counter < balls.size(); counter++) {           
                 balls.get(counter).addposX(balls.get(counter).getBallXdir());
@@ -148,7 +156,7 @@ public class GamePlay extends JPanel implements KeyListener, ActionListener{
                     
                 } else if (balls.get(counter).getBallposX() > 870) {
                     
-                }
+                } 
                 
                 // remove the ball if it's hits the top of the panel
                 if(balls.get(counter).getBallposY() < 0) {
@@ -162,13 +170,28 @@ public class GamePlay extends JPanel implements KeyListener, ActionListener{
                 enemyBomb.get(counter).addposY(enemyBomb.get(counter).getBallYdir());
                 
                 if(new Rectangle(playerX, 490 , 120, 60).intersects(new Rectangle(enemyBomb.get(counter).getBallposX(), enemyBomb.get(counter).getBallposY(), 20, 20))){
-                    enemyBomb.remove(counter);
+                	tank=exp;
                     play = false;
-                    break;
+                    JOptionPane.showMessageDialog(null, "Game Over");
+                    nom=JOptionPane.showInputDialog(null, "Entrer votre nom");
+                    if (nom == null)
+                    	nom = "inconnu";
+                    
+                    new Players(nom, score);
+                    int playagain=JOptionPane.showConfirmDialog(null, "Play Again !");
+                    if(playagain==0){
+                    	score=0;
+                    	new Main();
+                    }
+                    	
+                    
+                    else 
+                    	System.exit(0);
+                    
                 }
                 
                 // remove the bomb if it's hits the bottom of the panel
-                if(enemyBomb.get(counter).getBallposY() > 580) {
+                if(enemyBomb.get(counter).getBallposY() > 530 ) {
                     enemyBomb.remove(counter);
                 }
             }
@@ -190,7 +213,7 @@ public class GamePlay extends JPanel implements KeyListener, ActionListener{
                 if(intersectes)
                     break;
                 
-                planes.get(counter).addposX(1);
+                planes.get(counter).addposX(2);
                 planes.get(counter).addposY(0);
                     
                 // destroy the plane if it's hits the right border and decrease the score
@@ -212,7 +235,6 @@ public class GamePlay extends JPanel implements KeyListener, ActionListener{
             if(intersectes) {
                 planes.remove(idPlane);
                 score++;
-                System.out.println(score);
             }
         }
         
@@ -224,16 +246,16 @@ public class GamePlay extends JPanel implements KeyListener, ActionListener{
         if(play) {
             // move the baddle
             if(e.getKeyCode() == KeyEvent.VK_RIGHT) {
-                if(playerX >= 800) {
-                    playerX = 800;
+                if(playerX >= 780) {
+                    playerX = 780;
                 }
                 else {
                     moveRight();
                 }
             }
             if(e.getKeyCode() == KeyEvent.VK_LEFT) {
-                if(playerX < 10) {
-                    playerX = 10;
+                if(playerX <= -10) {
+                    playerX = -10;
                 }
                 else {
                     moveLeft();
@@ -242,18 +264,22 @@ public class GamePlay extends JPanel implements KeyListener, ActionListener{
             
             // create a new bomb
             if(e.getKeyCode() == KeyEvent.VK_SPACE) {                
-                switch(tubeIndex){  
-                    case 0: balls.add(new Ball(playerX + 50, 470 , -2, -1)); break;  
-                    case 1: balls.add(new Ball(playerX + 50, 470 , -1, -1)); break;  
-                    case 2: balls.add(new Ball(playerX)); break;  
-                    case 3: balls.add(new Ball(playerX + 50, 470 , 1, -1)); break;  
-                    case 4: balls.add(new Ball(playerX + 50, 470 , 2, -1)); break;  
-                    default: System.out.println("Error while creating a new ball");  
+                
+                if(balls.size()<3){
+                	 switch(tubeIndex){ 
+                	 case 0: balls.add(new Ball(playerX + 44, 455 , -2, -2)); break;  
+                     case 1: balls.add(new Ball(playerX + 48, 455 , -1, -3)); break;  
+                     case 2: balls.add(new Ball(playerX)); break;  
+                     case 3: balls.add(new Ball(playerX + 58, 455 , 1, -3)); break;  
+                     case 4: balls.add(new Ball(playerX + 62, 455 , 2, -2)); break;  
+                     default: System.out.println("Error while creating a new ball");                             
+                 }
                 }
+                   
             }
             
             // change position of the tube
-            if(e.getKeyCode() == KeyEvent.VK_D) {
+            if(e.getKeyCode() == KeyEvent.VK_D ) {
                 if(tubeIndex < 4) {
                     tubeIndex++;
                     try {
@@ -284,11 +310,11 @@ public class GamePlay extends JPanel implements KeyListener, ActionListener{
     }
     
     public void moveRight() {
-        playerX += 20;
+        playerX   += 10;
     }
     
     public void moveLeft() {
-        playerX -= 20;
+        playerX -= 10;
     }
 
     @Override
@@ -296,4 +322,14 @@ public class GamePlay extends JPanel implements KeyListener, ActionListener{
     
     @Override
     public void keyTyped(KeyEvent e) { }
+
+	public boolean isPlay() {
+		return play;
+	}
+
+	public void setPlay(boolean play) {
+		this.play = play;
+	}
+    
+    
 }

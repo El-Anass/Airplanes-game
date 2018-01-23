@@ -5,25 +5,28 @@
  */
 package GamePackage;
 
-import java.awt.FlowLayout;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 
 /**
  *
  * @author elabbadi
  */
 public class Main {
-    public static void main(String[] args) {
-        JFrame obj = new JFrame();
+	
+	public Main()
+	{
+		JFrame obj = new JFrame();
         GamePlay gamePlay = new GamePlay();
         obj.setBounds(10, 10, 900, 600);
         obj.setTitle("Plane Game");
         obj.setResizable(false);
         obj.setVisible(true);
         obj.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        
         obj.add(gamePlay);
+	}
+    public static void main(String[] args) {	
         
+    new Main();
+    
    }
 }
